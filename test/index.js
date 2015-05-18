@@ -9,18 +9,20 @@ var seedArticles = require('../db/articles.json');
 
  	it('Should response to get', function(done){
  		agent
-      .get('/')
+      .get('/post')
       .expect(200)
       .expect(function(res){
 
-      	console.log(res.body);
-      	console.log(res.text);
-
         //to pass test return falsy value
-        var pass = false;
         for(var i=0, l=seedArticles.length; i<l; i++) {
-        	console.log(i);
+        	if(seedArticles[i].published === true) {
+            if(res.text.indexOf('<h2><a href="/articles/'+ seedArticles[i].slug +'">'+seedArticles[i].title) === -1) {
+              throw new Error("Not found");
+              return;
+            }
+          }
         }
+        return true;
       })
       .end(done);
  	});
